@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="toplevel">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:group ref="subelement"/>
+            </xs:sequence>
+            <xs:attribute name="title" use="required" type="titleType"/>
+            <xs:anyAttribute processContents="lax"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:group name="subelement">
+        <xs:sequence>
+            <xs:element name="myelement" type="elementType"/>
+            <xs:any minOccurs="0"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:simpleType name="titleType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="elementType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:anyAttribute processContents="lax"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>
