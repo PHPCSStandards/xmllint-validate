@@ -23,6 +23,9 @@ inputs:
     description: 'URL to a remote file containing the XSD schema to validate against.'
     required: false
     default: ''
+  show-in-pr:
+    description: 'Show any errors from xmllint inline in PRs ?'
+    required: false
 
 runs:
   using: "composite"
@@ -119,6 +122,12 @@ runs:
     - name: 'Install xmllint'
       shell: bash
       run: sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
+
+    # Show XML violations inline in the file diff.
+    # @link https://github.com/marketplace/actions/xmllint-problem-matcher
+    - name: 'Enable showing XML issues inline'
+      if: ${{ inputs.show-in-pr != 'false' }}
+      uses: korelstar/xmllint-problem-matcher@v1
 
     - name: 'Validate for well-formedness'
       if: ${{ ! inputs.xsd-file && ! inputs.xsd-url }}

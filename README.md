@@ -4,11 +4,12 @@ GitHub Action to validate XML files for being well-formed and optionally validat
 
 ## Action inputs
 
-| Input      | Required | Type   | Notes                                                                                 |
-|------------|----------|--------|---------------------------------------------------------------------------------------|
-| `pattern`  | yes      | string | The file(s) to validate. The input expects a path to a single file or a glob pattern. |
-| `xsd-file` | no       | string | Path to a local file containing the XSD schema to validate against.                   |
-| `xsd-url`  | no       | string | URL to a remote file containing the XSD schema to validate against.                   |
+| Input        | Required | Type   | Notes                                                                                 |
+|--------------|----------|--------|---------------------------------------------------------------------------------------|
+| `pattern`    | yes      | string | The file(s) to validate. The input expects a path to a single file or a glob pattern. |
+| `xsd-file`   | no       | string | Path to a local file containing the XSD schema to validate against.                   |
+| `xsd-url`    | no       | string | URL to a remote file containing the XSD schema to validate against.                   |
+| `show-in-pr` | no       | bool   | Annotate any errors from xmllint inline in PRs ? Defaults to `true`.                  |
 
 > [!NOTE]
 > If both an `xsd-file` and an `xsd-url` are passed, the `xsd-file` takes precedence.
