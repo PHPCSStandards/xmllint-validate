@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate XML file
-        uses: phpcsstandards/xmllint-validate@v0
+        uses: phpcsstandards/xmllint-validate@v1
         with:
           pattern: "path/to/file.xml"
 ```
@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate XML files
-        uses: phpcsstandards/xmllint-validate@v0
+        uses: phpcsstandards/xmllint-validate@v1
         with:
           pattern: "path/to/*/docs/*.xml"
 ```
@@ -92,6 +92,75 @@ jobs:
           xsd-url: "https://examples.org/docs.xsd"
 ```
 
+## Example usage
+
+Some examples of how this action can be used:
+
+### Validate XSD files in a repo against the official specs
+
+```yaml
+jobs:
+  test:
+    name: "Validate XSD files"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate XSD files conform to the specs
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "path/to/*.xsd"
+          xsd-url: "https://www.w3.org/2012/04/XMLSchema.xsd"
+```
+
+### Validate a PHP_CodeSniffer XML configuration file against the XSD of the installed version
+
+The below workflow presumes [PHP_CodeSniffer] is installed via [Composer].
+
+```yaml
+jobs:
+  test:
+    name: "XMLLint validate"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate PHP_CodeSniffer XML ruleset
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpcs.xml.dist"
+          xsd-file: "vendor/squizlabs/php_codesniffer/phpcs.xsd"
+```
+
+### Validate a PHPUnit XML configuration file against the XSD of the installed version
+
+The below workflow presumes [PHPUnit] is installed via [Composer].
+
+```yaml
+jobs:
+  test:
+    name: "XMLLint validate"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate PHPUnit XML configuration against current
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpunit.xml.dist"
+          xsd-file: "vendor/phpunit/phpunit/phpunit.xsd"
+
+      # Or alternatively:
+      - name: Validate PHPUnit XML configuration against older XSD
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpunit.xml.dist"
+          xsd-file: "vendor/phpunit/phpunit/schema/9.2.xsd"
+```
+
 
 ## Contributing
 
@@ -104,3 +173,8 @@ If unsure whether the changes you are proposing would be welcome, open an issue 
 
 The phpcsstandards/xmllint-validate GitHub Action is ©copyright PHPCSStandards and contributors and licensed for use under the terms of the MIT License (MIT).
 Please see [LICENSE](LICENSE) for more information.
+
+
+[Composer]:        https://getcomposer.org
+[PHPUnit]:         https://phpunit.de/index.html
+[PHP_CodeSniffer]: https://github.com/PHPCSStandards/PHP_CodeSniffer
