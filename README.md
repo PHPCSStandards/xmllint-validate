@@ -1,6 +1,15 @@
 # XMLLint Validate
 
+<div aria-hidden="true">
+
+[![Latest Stable Version](https://img.shields.io/github/v/release/PHPCSStandards/xmllint-validate?label=Stable)](https://github.com/PHPCSStandards/xmllint-validate/releases)
+[![Test](https://github.com/PHPCSStandards/xmllint-validate/actions/workflows/test.yml/badge.svg?branch=develop)](https://github.com/PHPCSStandards/xmllint-validate/actions/workflows/test.yml)
+[![License](https://img.shields.io/github/license/PHPCSStandards/xmllint-validate)](https://github.com/PHPCSStandards/xmllint-validate/blob/develop/LICENSE)
+
+</div>
+
 GitHub Action to validate XML files for being well-formed and optionally validate against an XSD schema file.
+
 
 ## Action inputs
 
