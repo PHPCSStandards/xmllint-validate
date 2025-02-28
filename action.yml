@@ -1,0 +1,46 @@
+# Actions docs: https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions
+# XMLLint docs: http://xmlsoft.org/xmllint.html
+
+name: 'XMLLint Validate'
+author: 'Juliette Reinders Folmer'
+description: >-
+  Validate an XML file for being well-formed.
+
+# Icons available: https://feathericons.com/
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  pattern:
+    description: 'Path to the file or glob pattern for the file(s) to validate with xmllint.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Validate pattern input'
+      if: ${{ ! inputs.pattern }}
+      shell: bash
+      run: |
+        # Validate pattern input.
+        echo "::error title=XMLLint Validate::Missing required input 'pattern'. Please provide a path to a file or a glob pattern."
+        exit 1
+
+    # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
+    # This should not be blocking for this action, so ignore any errors from this step.
+    # Ref: https://github.com/dotnet/core/issues/4167
+    - name: 'Update the available packages list'
+      continue-on-error: true
+      shell: bash
+      run: sudo apt-get -q update > /dev/null
+
+    - name: 'Install xmllint'
+      shell: bash
+      run: sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
+
+    - name: 'Validate for well-formedness'
+      env:
+        GLOB_PATTERN: ${{ inputs.pattern }}
+      shell: bash
+      run: xmllint --noout $GLOB_PATTERN

@@ -8,6 +8,7 @@
 /.remarkrc               export-ignore
 /.yamllint.yml           export-ignore
 /.github/                export-ignore
+/tests/                  export-ignore
 
 #
 # Auto detect text files and perform LF normalization

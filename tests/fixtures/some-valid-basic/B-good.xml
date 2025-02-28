@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ruleset title="Ten chars">
+    <rule ref="ref"/>
+</ruleset>

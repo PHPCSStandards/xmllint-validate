@@ -26,3 +26,67 @@ jobs:
   remark:
     name: 'QA Markdown'
     uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@main
+
+  test:
+    needs: yamllint
+
+    name: "${{ matrix.name }}"
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          ####################################################
+          # Basic action input handling.
+          ####################################################
+
+          # Test input handling: missing required input.
+          - name: "Test required input missing"
+            expected: "fail"
+
+          ####################################################
+          # Basic well-formedness tests.
+          ####################################################
+
+          # Test basic well-formedness validation.
+          - name: "Test no XSD, valid XML"
+            pattern: tests/fixtures/valid-basic.xml
+            expected: success
+
+          - name: "Test no XSD, invalid XML"
+            pattern: tests/fixtures/invalid-basic.xml
+            expected: fail
+
+          # Test that glob patterns are handled correctly.
+          - name: "Test no XSD, glob, valid XML files"
+            pattern: ./tests/fixtures/all-valid-basic/*.xml
+            expected: success
+
+          - name: "Test no XSD, glob, invalid XML files"
+            pattern: ./tests/*/some-valid-basic/*.xml
+            expected: fail
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run the test
+        id: xmllint-validate
+        continue-on-error: true
+        uses: ./
+        with:
+          pattern: ${{ matrix.pattern }}
+
+      - name: "Check the result of a successful test against expectation"
+        if: ${{ steps.xmllint-validate.outcome == 'success' }}
+        run: |
+          if [ "${{ matrix.expected == 'fail' }}" == "true" ]; then
+            exit 1
+          fi
+
+      - name: "Check the result of a failed test against expectation"
+        if: ${{ steps.xmllint-validate.outcome != 'success' }}
+        run: |
+          if [ "${{ matrix.expected == 'success' }}" == "true" ]; then
+            exit 1
+          fi
