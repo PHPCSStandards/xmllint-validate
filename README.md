@@ -169,10 +169,24 @@ Contributions to this project are welcome. Clone this repository, create a new b
 If unsure whether the changes you are proposing would be welcome, open an issue first to discuss your proposal.
 
 
+## Funding
+
+This project is part of the [PHPCSStandards Open Collective](https://opencollective.com/php_codesniffer) and financial support for this project is always appreciated!
+
+
 ## Copyright and License
 
-The phpcsstandards/xmllint-validate GitHub Action is ©copyright PHPCSStandards and contributors and licensed for use under the terms of the MIT License (MIT).
+The phpcsstandards/xmllint-validate GitHub Action is [©copyright PHPCSStandards and contributors](https://github.com/PHPCSStandards/xmllint-validate/graphs/contributors) and licensed for use under the terms of the MIT License (MIT).
 Please see [LICENSE](LICENSE) for more information.
+
+
+### Other Credits
+
+This action gratefully makes use of the following externally provided tools which are each governed by their own licensing:
+
+* [`xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html)
+* [`xmllint-problem-matcher`](https://github.com/korelstar/xmllint-problem-matcher)
+* [`wget`](https://www.gnu.org/software/wget/)
 
 
 [Composer]:        https://getcomposer.org
