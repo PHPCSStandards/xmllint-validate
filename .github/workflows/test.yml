@@ -162,6 +162,42 @@ jobs:
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
             expected: "fail"
 
+          ####################################################
+          # Support "Show in PR".
+          ####################################################
+
+          # The default behaviour (enabled, not explicitly passed) is tested via all the other tests.
+          # Even though we can't safeguard the underlying functionality via CI, it can be
+          # confirmed the toggle functionality works correctly by looking at the "Annotations" fold-out
+          # above the logs for the individual jobs which have a "fail" expectation.
+
+          # Safeguard that explicitly enabling/disabling the show-in-pr option doesn't break anything.
+          - name: "Test show-in-pr: bool true"
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: true
+            expected: "fail"
+
+          - name: "Test show-in-pr: string true"
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: 'true'
+            expected: "fail"
+
+          - name: "Test show-in-pr: bool false"
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: false
+            expected: "fail"
+
+          - name: "Test show-in-pr: string false"
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: 'false'
+            expected: "fail"
+
+          # Any other value should have no influence and the default behaviour (annotations = on) should prevail.
+          - name: "Test show-in-pr: unsupported value"
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: somethingElse
+            expected: "fail"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -174,6 +210,7 @@ jobs:
           pattern: ${{ matrix.pattern }}
           xsd-file: ${{ matrix.xsd-file }}
           xsd-url: ${{ matrix.xsd-url }}
+          show-in-pr: ${{ matrix.show-in-pr }}
 
       - name: "Check the result of a successful test against expectation"
         if: ${{ steps.xmllint-validate.outcome == 'success' }}
