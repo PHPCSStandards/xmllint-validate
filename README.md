@@ -196,9 +196,9 @@ Please see [LICENSE](LICENSE) for more information.
 
 This action gratefully makes use of the following externally provided tools which are each governed by their own licensing:
 
-* [`xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html)
-* [`xmllint-problem-matcher`](https://github.com/korelstar/xmllint-problem-matcher)
-* [`wget`](https://www.gnu.org/software/wget/)
+* [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html)
+* [xmllint-problem-matcher](https://github.com/korelstar/xmllint-problem-matcher)
+* [wget](https://www.gnu.org/software/wget/)
 
 
 [Composer]:        https://getcomposer.org
