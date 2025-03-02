@@ -113,6 +113,55 @@ jobs:
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             expected: "fail"
 
+          ####################################################
+          # Validate against an (originally) remote XSD file.
+          ####################################################
+
+          # Test input handling: optional XSD URL.
+          - name: "Test XSD URL wrong scheme"
+            pattern: tests/fixtures/valid-local.xml
+            xsd-url: file://tests/fixtures/valid-local.xml
+            expected: "fail"
+
+          - name: "Test XSD URL wrong file extension"
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/wrong-extension.notxsd
+            expected: "fail"
+
+          - name: "Test XSD URL doesn't exist"
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/file-does-not-exist.xsd
+            expected: "fail"
+
+          - name: "Test XSD URL empty"
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/file-is-empty.xsd
+            expected: "fail"
+
+          # Test validating against a (originally) remote XSD schema.
+          - name: "Test remote XSD file, valid XML"
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: http://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "success"
+
+          - name: "Test remote XSD file, valid XML, not valid against schema"
+            pattern: tests/fixtures/invalid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "fail"
+
+          # Safeguard that a local XSD file always takes precedence over a remote XSD URL.
+          - name: "Test local XSD overrules remote [1]"
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "success"
+
+          - name: "Test local XSD overrules remote [2]"
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "fail"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -124,6 +173,7 @@ jobs:
         with:
           pattern: ${{ matrix.pattern }}
           xsd-file: ${{ matrix.xsd-file }}
+          xsd-url: ${{ matrix.xsd-url }}
 
       - name: "Check the result of a successful test against expectation"
         if: ${{ steps.xmllint-validate.outcome == 'success' }}

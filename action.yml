@@ -19,6 +19,10 @@ inputs:
     description: 'Path to a local file containing the XSD schema to validate against.'
     required: false
     default: ''
+  xsd-url:
+    description: 'URL to a remote file containing the XSD schema to validate against.'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -55,6 +59,55 @@ runs:
           fi
         fi
 
+    - name: 'Notify about precedence'
+      if: ${{ inputs.xsd-file && inputs.xsd-url }}
+      shell: bash
+      # yamllint disable rule:line-length
+      run: |
+        echo "::warning title=XMLLint Validate::Both a local file as well as a remote URL passed for the XSD file. The local file takes precedence, the remote URL will be ignored."
+        # yamllint enable rule:line-length
+
+    - name: 'Set local file name'
+      if: ${{ ! inputs.xsd-file && inputs.xsd-url }}
+      shell: bash
+      run: |
+        # Set environment variable.
+        # Name which is unlikely to conflict with any existing files in a repo.
+        echo "DOWNLOADED_XSD_FILE=xmllint-validate-action-schema.xsd" >> "$GITHUB_ENV"
+
+    - name: 'Validate the URL and download the schema file'
+      id: valid_xsdurl
+      if: ${{ ! inputs.xsd-file && inputs.xsd-url }}
+      env:
+        XSD_URL: ${{ inputs.xsd-url }}
+      shell: bash
+      # yamllint disable rule:line-length
+      run: |
+        # Validate remote URL input and download file.
+        # Check for non-zero length URL input.
+        if [[ -n "${{ env.XSD_URL }}" ]]; then
+          # Check that URL uses http(s) protocol.
+          if [[ "${{ startsWith( env.XSD_URL, 'http://' ) || startsWith( env.XSD_URL, 'https://' ) || startsWith( env.XSD_URL, 'ftp://' ) }}" == "false" ]]; then
+            echo "::error title=XMLLint Validate::URL to the XSD file must be an 'http', 'https' or 'ftp' URL."
+            exit 1
+          # Check that URL ends on .xsd.
+          elif [[ "${{ endsWith( env.XSD_URL, '.xsd' ) }}" == "false" ]]; then
+            echo "::error title=XMLLint Validate::URL to the XSD file must point to a file using an '.xsd' file extension."
+            exit 1
+          # Try to download it.
+          else
+            wget -nc -nv "${{ env.XSD_URL }}" -O "${{ env.DOWNLOADED_XSD_FILE }}"
+            if [[ -f "${{ env.DOWNLOADED_XSD_FILE }}" && -s "${{ env.DOWNLOADED_XSD_FILE }}" ]]; then
+              echo 'Download of the XSD file succesfull.'
+              exit 0
+            else
+              echo "::error title=XMLLint Validate::Remote XSD file must exist and have a file size greater than 0."
+              exit 1
+            fi
+          fi
+        fi
+        # yamllint enable rule:line-length
+
     # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
     # This should not be blocking for this action, so ignore any errors from this step.
     # Ref: https://github.com/dotnet/core/issues/4167
@@ -68,7 +121,7 @@ runs:
       run: sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
 
     - name: 'Validate for well-formedness'
-      if: ${{ ! inputs.xsd-file }}
+      if: ${{ ! inputs.xsd-file && ! inputs.xsd-url }}
       env:
         GLOB_PATTERN: ${{ inputs.pattern }}
       shell: bash
@@ -81,3 +134,15 @@ runs:
         XSD_FILE: ${{ inputs.xsd-file }}
       shell: bash
       run: xmllint --noout --schema "$XSD_FILE" $GLOB_PATTERN
+
+    - name: 'Validate against downloaded remote schema'
+      if: ${{ ! inputs.xsd-file && inputs.xsd-url }}
+      env:
+        GLOB_PATTERN: ${{ inputs.pattern }}
+      shell: bash
+      run: xmllint --noout --schema ${{ env.DOWNLOADED_XSD_FILE }} $GLOB_PATTERN
+
+    - name: 'Clean up downloaded file'
+      if: ${{ ! inputs.xsd-file && inputs.xsd-url }}
+      shell: bash
+      run: rm -f ${{ env.DOWNLOADED_XSD_FILE }}

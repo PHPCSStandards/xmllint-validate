@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<remote title="This must be more than ten chars">
+    <subelement>This document is valid for the valid-remote.xsd file.</subelement>
+</remote>
