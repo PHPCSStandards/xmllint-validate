@@ -131,7 +131,7 @@ jobs:
         uses: shivammathur/setup-php@v2
 
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@v3
 
       - name: Validate PHP_CodeSniffer XML ruleset
         uses: phpcsstandards/xmllint-validate@v1
@@ -157,7 +157,7 @@ jobs:
         uses: shivammathur/setup-php@v2
 
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@v3
 
       - name: Validate PHPUnit XML configuration against current
         uses: phpcsstandards/xmllint-validate@v1
@@ -196,9 +196,9 @@ Please see [LICENSE](LICENSE) for more information.
 
 This action gratefully makes use of the following externally provided tools which are each governed by their own licensing:
 
-* [`xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html)
-* [`xmllint-problem-matcher`](https://github.com/korelstar/xmllint-problem-matcher)
-* [`wget`](https://www.gnu.org/software/wget/)
+* [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html)
+* [xmllint-problem-matcher](https://github.com/korelstar/xmllint-problem-matcher)
+* [wget](https://www.gnu.org/software/wget/)
 
 
 [Composer]:        https://getcomposer.org
