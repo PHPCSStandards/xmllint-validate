@@ -131,7 +131,7 @@ jobs:
         uses: shivammathur/setup-php@v2
 
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@v3
 
       - name: Validate PHP_CodeSniffer XML ruleset
         uses: phpcsstandards/xmllint-validate@v1
@@ -157,7 +157,7 @@ jobs:
         uses: shivammathur/setup-php@v2
 
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@v3
 
       - name: Validate PHPUnit XML configuration against current
         uses: phpcsstandards/xmllint-validate@v1
