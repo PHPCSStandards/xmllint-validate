@@ -116,7 +116,7 @@ jobs:
 
 ### Validate a PHP_CodeSniffer XML configuration file against the XSD of the installed version
 
-The below workflow presumes [PHP_CodeSniffer] is installed via [Composer].
+The below workflow presumes [PHP_CodeSniffer] will be installed via [Composer].
 
 ```yaml
 jobs:
@@ -126,6 +126,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
 
       - name: Validate PHP_CodeSniffer XML ruleset
         uses: phpcsstandards/xmllint-validate@v1
@@ -136,7 +142,7 @@ jobs:
 
 ### Validate a PHPUnit XML configuration file against the XSD of the installed version
 
-The below workflow presumes [PHPUnit] is installed via [Composer].
+The below workflow presumes [PHPUnit] will be installed via [Composer].
 
 ```yaml
 jobs:
@@ -146,6 +152,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
 
       - name: Validate PHPUnit XML configuration against current
         uses: phpcsstandards/xmllint-validate@v1
