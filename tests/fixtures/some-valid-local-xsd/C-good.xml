@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<toplevel name="My document" title="123">
+    <myelement hasAttribute="true">This document is valid for the valid-local.xsd file.</myelement>
+</toplevel>

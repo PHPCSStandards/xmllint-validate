@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<toplevel title="More than ten chars">
+    <wrongelement>This document is INvalid for the valid-local.xsd file.</wrongelement>
+</toplevel>

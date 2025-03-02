@@ -15,6 +15,10 @@ inputs:
   pattern:
     description: 'Path to the file or glob pattern for the file(s) to validate with xmllint.'
     required: true
+  xsd-file:
+    description: 'Path to a local file containing the XSD schema to validate against.'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -26,6 +30,30 @@ runs:
         # Validate pattern input.
         echo "::error title=XMLLint Validate::Missing required input 'pattern'. Please provide a path to a file or a glob pattern."
         exit 1
+
+    - name: 'Validate local XSD file input'
+      id: valid_xsdfile
+      if: ${{ inputs.xsd-file }}
+      env:
+        XSD_FILE: ${{ inputs.xsd-file }}
+      shell: bash
+      run: |
+        # Validate local file input.
+        # Check for non-zero length file name.
+        if [[ -n "${{ env.XSD_FILE }}" ]]; then
+          # Check that file name ends on .xsd.
+          if [[ "${{ endsWith( env.XSD_FILE, '.xsd' ) }}" == "false" ]]; then
+            echo "::error title=XMLLint Validate::Local XSD file must use an '.xsd' file extension."
+            exit 1
+          # Check the file exists and has contents (file size greater than zero).
+          elif [[ -f "${{ env.XSD_FILE }}" && -s "${{ env.XSD_FILE }}" ]]; then
+            echo 'Local XSD file found.'
+            exit 0
+          else
+            echo "::error title=XMLLint Validate::Local XSD file must exist and have a file size greater than 0."
+            exit 1
+          fi
+        fi
 
     # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
     # This should not be blocking for this action, so ignore any errors from this step.
@@ -40,7 +68,16 @@ runs:
       run: sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
 
     - name: 'Validate for well-formedness'
+      if: ${{ ! inputs.xsd-file }}
       env:
         GLOB_PATTERN: ${{ inputs.pattern }}
       shell: bash
       run: xmllint --noout $GLOB_PATTERN
+
+    - name: 'Validate against local schema'
+      if: ${{ inputs.xsd-file }}
+      env:
+        GLOB_PATTERN: ${{ inputs.pattern }}
+        XSD_FILE: ${{ inputs.xsd-file }}
+      shell: bash
+      run: xmllint --noout --schema "$XSD_FILE" $GLOB_PATTERN

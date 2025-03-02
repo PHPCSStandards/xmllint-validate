@@ -66,6 +66,53 @@ jobs:
             pattern: ./tests/*/some-valid-basic/*.xml
             expected: fail
 
+          ####################################################
+          # Validate against a local XSD file.
+          ####################################################
+
+          # Test input handling: optional XSD file.
+          - name: "Test XSD file wrong file extension"
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/wrong-extension.notxsd
+            expected: "fail"
+
+          - name: "Test XSD file doesn't exist"
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/file-does-not-exist.xsd
+            expected: "fail"
+
+          - name: "Test XSD file empty"
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/file-is-empty.xsd
+            expected: "fail"
+
+          # Test validating against a local XSD schema.
+          - name: "Test XSD file, valid XML + schema"
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "success"
+
+          - name: "Test XSD file, invalid XML"
+            pattern: tests/fixtures/invalid-basic.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "fail"
+
+          - name: "Test XSD file, valid XML, not schema"
+            pattern: tests/fixtures/invalid-local.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "fail"
+
+          # Test that glob patterns are handled correctly in combination with a local XSD schema.
+          - name: "Test XSD file, glob, valid XML + schema"
+            pattern: ./tests/fixtures/all-valid-local-xsd/*.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "success"
+
+          - name: "Test XSD file, glob, valid XML, not schema"
+            pattern: ./tests/fixtures/some-*-local-xsd/*.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "fail"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,6 +123,7 @@ jobs:
         uses: ./
         with:
           pattern: ${{ matrix.pattern }}
+          xsd-file: ${{ matrix.xsd-file }}
 
       - name: "Check the result of a successful test against expectation"
         if: ${{ steps.xmllint-validate.outcome == 'success' }}

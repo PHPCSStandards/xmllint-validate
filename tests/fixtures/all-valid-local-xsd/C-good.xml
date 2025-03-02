@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<toplevel title="Something.">
+    <myelement>This document is valid for the valid-local.xsd file.</myelement>
+    <myelement>Second element.</myelement>
+    <myelement>
+    <![CDATA[
+    Third element.
+    ]]>
+    </myelement>
+    <myelement>Fourth element.</myelement>
+</toplevel>
