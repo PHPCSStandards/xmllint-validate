@@ -26,6 +26,9 @@ inputs:
   show-in-pr:
     description: 'Show any errors from xmllint inline in PRs ?'
     required: false
+  debug:
+    description: 'Whether to show verbose output for debugging the action'
+    required: false
 
 runs:
   using: "composite"
@@ -37,6 +40,18 @@ runs:
         # Validate pattern input.
         echo "::error title=XMLLint Validate::Missing required input 'pattern'. Please provide a path to a file or a glob pattern."
         exit 1
+
+    - name: 'Set debug mode'
+      env:
+        DEBUG_INPUT: ${{ inputs.debug }}
+      shell: bash
+      run: |
+        # Determine debug mode.
+        if [[ "${{ env.DEBUG_INPUT }}" == "true" ]]; then
+          echo "DEBUG=true" >> "$GITHUB_ENV"
+        else
+          echo "DEBUG=false" >> "$GITHUB_ENV"
+        fi
 
     - name: 'Validate local XSD file input'
       id: valid_xsdfile
@@ -99,7 +114,11 @@ runs:
             exit 1
           # Try to download it.
           else
-            wget -nc -nv "${{ env.XSD_URL }}" -O "${{ env.DOWNLOADED_XSD_FILE }}"
+            if [[ "${{ env.DEBUG }}" == "false" ]]; then
+              wget -nc -nv "${{ env.XSD_URL }}" -O "${{ env.DOWNLOADED_XSD_FILE }}"
+            else
+              wget -nc "${{ env.XSD_URL }}" -O "${{ env.DOWNLOADED_XSD_FILE }}"
+            fi
             if [[ -f "${{ env.DOWNLOADED_XSD_FILE }}" && -s "${{ env.DOWNLOADED_XSD_FILE }}" ]]; then
               echo 'Download of the XSD file succesfull.'
               exit 0
@@ -117,17 +136,39 @@ runs:
     - name: 'Update the available packages list'
       continue-on-error: true
       shell: bash
-      run: sudo apt-get -q update > /dev/null
+      run: |
+        # Update package list.
+        if [[ "${{ env.DEBUG }}" == "false" ]]; then
+          sudo apt-get -q update > /dev/null
+        else
+          sudo apt-get update
+        fi
 
     - name: 'Install xmllint'
       shell: bash
-      run: sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
+      run: |
+        # Install xmllint.
+        if [[ "${{ env.DEBUG }}" == "false" ]]; then
+          sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
+        else
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+          xmllint --version
+        fi
 
     # Show XML violations inline in the file diff.
     # @link https://github.com/marketplace/actions/xmllint-problem-matcher
     - name: 'Enable showing XML issues inline'
       if: ${{ inputs.show-in-pr != 'false' }}
       uses: korelstar/xmllint-problem-matcher@v1
+
+    - name: 'List files'
+      if: ${{ inputs.debug }}
+      env:
+        GLOB_PATTERN: ${{ inputs.pattern }}
+      shell: bash
+      run: |
+        # List files which will be examined.
+        ls -ah $GLOB_PATTERN
 
     - name: 'Validate for well-formedness'
       if: ${{ ! inputs.xsd-file && ! inputs.xsd-url }}
