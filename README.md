@@ -10,6 +10,7 @@ GitHub Action to validate XML files for being well-formed and optionally validat
 | `xsd-file`   | no       | string | Path to a local file containing the XSD schema to validate against.                   |
 | `xsd-url`    | no       | string | URL to a remote file containing the XSD schema to validate against.                   |
 | `show-in-pr` | no       | bool   | Annotate any errors from xmllint inline in PRs ? Defaults to `true`.                  |
+| `debug`      | no       | bool   | Show verbose output to allow for debugging the action. Defaults to `false`.           |
 
 > [!NOTE]
 > If both an `xsd-file` and an `xsd-url` are passed, the `xsd-file` takes precedence.

@@ -198,6 +198,22 @@ jobs:
             show-in-pr: somethingElse
             expected: "fail"
 
+          ####################################################
+          # Verbose vs non-verbose output.
+          ####################################################
+
+          # Re-run a few tests with verbosity on to allow for viewing the difference in the output.
+          # Safeguard that explicitly enabling/disabling the debug option doesn't break anything.
+          - name: "Debug off, valid XML"
+            pattern: tests/fixtures/valid-basic.xml
+            debug: false
+            expected: "success"
+
+          - name: "Debug on, invalid XML"
+            pattern: ./tests/*/some-valid-basic/*.xml
+            debug: true
+            expected: "fail"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -211,6 +227,7 @@ jobs:
           xsd-file: ${{ matrix.xsd-file }}
           xsd-url: ${{ matrix.xsd-url }}
           show-in-pr: ${{ matrix.show-in-pr }}
+          debug: ${{ matrix.debug }}
 
       - name: "Check the result of a successful test against expectation"
         if: ${{ steps.xmllint-validate.outcome == 'success' }}
