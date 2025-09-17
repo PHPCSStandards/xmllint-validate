@@ -5,6 +5,7 @@
 #
 /.gitattributes          export-ignore
 /.markdownlint-cli2.yaml export-ignore
+/.pinact.yaml            export-ignore
 /.remarkrc               export-ignore
 /.yamllint.yml           export-ignore
 /.github/                export-ignore
