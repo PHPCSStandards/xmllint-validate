@@ -47,7 +47,7 @@ runs:
       shell: bash
       run: |
         # Determine debug mode.
-        if [[ "${{ env.DEBUG_INPUT }}" == "true" ]]; then
+        if [[ "${DEBUG_INPUT}" == "true" ]]; then
           echo "DEBUG=true" >> "$GITHUB_ENV"
         else
           echo "DEBUG=false" >> "$GITHUB_ENV"
@@ -62,13 +62,13 @@ runs:
       run: |
         # Validate local file input.
         # Check for non-zero length file name.
-        if [[ -n "${{ env.XSD_FILE }}" ]]; then
+        if [[ -n "${XSD_FILE}" ]]; then
           # Check that file name ends on .xsd.
           if [[ "${{ endsWith( env.XSD_FILE, '.xsd' ) }}" == "false" ]]; then
             echo "::error title=XMLLint Validate::Local XSD file must use an '.xsd' file extension."
             exit 1
           # Check the file exists and has contents (file size greater than zero).
-          elif [[ -f "${{ env.XSD_FILE }}" && -s "${{ env.XSD_FILE }}" ]]; then
+          elif [[ -f "${XSD_FILE}" && -s "${XSD_FILE}" ]]; then
             echo 'Local XSD file found.'
             exit 0
           else
@@ -103,7 +103,7 @@ runs:
       run: |
         # Validate remote URL input and download file.
         # Check for non-zero length URL input.
-        if [[ -n "${{ env.XSD_URL }}" ]]; then
+        if [[ -n "${XSD_URL}" ]]; then
           # Check that URL uses http(s) protocol.
           if [[ "${{ startsWith( env.XSD_URL, 'http://' ) || startsWith( env.XSD_URL, 'https://' ) || startsWith( env.XSD_URL, 'ftp://' ) }}" == "false" ]]; then
             echo "::error title=XMLLint Validate::URL to the XSD file must be an 'http', 'https' or 'ftp' URL."
@@ -114,12 +114,12 @@ runs:
             exit 1
           # Try to download it.
           else
-            if [[ "${{ env.DEBUG }}" == "false" ]]; then
-              wget -nc -nv "${{ env.XSD_URL }}" -O "${{ env.DOWNLOADED_XSD_FILE }}"
+            if [[ "${DEBUG}" == "false" ]]; then
+              wget -nc -nv "${XSD_URL}" -O "${DOWNLOADED_XSD_FILE}"
             else
-              wget -nc "${{ env.XSD_URL }}" -O "${{ env.DOWNLOADED_XSD_FILE }}"
+              wget -nc "${XSD_URL}" -O "${DOWNLOADED_XSD_FILE}"
             fi
-            if [[ -f "${{ env.DOWNLOADED_XSD_FILE }}" && -s "${{ env.DOWNLOADED_XSD_FILE }}" ]]; then
+            if [[ -f "${DOWNLOADED_XSD_FILE}" && -s "${DOWNLOADED_XSD_FILE}" ]]; then
               echo 'Download of the XSD file succesfull.'
               exit 0
             else
@@ -138,7 +138,7 @@ runs:
       shell: bash
       run: |
         # Update package list.
-        if [[ "${{ env.DEBUG }}" == "false" ]]; then
+        if [[ "${DEBUG}" == "false" ]]; then
           sudo apt-get -q update > /dev/null
         else
           sudo apt-get update
@@ -148,7 +148,7 @@ runs:
       shell: bash
       run: |
         # Install xmllint.
-        if [[ "${{ env.DEBUG }}" == "false" ]]; then
+        if [[ "${DEBUG}" == "false" ]]; then
           sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
         else
           sudo apt-get install --no-install-recommends -y libxml2-utils
@@ -190,9 +190,9 @@ runs:
       env:
         GLOB_PATTERN: ${{ inputs.pattern }}
       shell: bash
-      run: xmllint --noout --schema ${{ env.DOWNLOADED_XSD_FILE }} $GLOB_PATTERN
+      run: xmllint --noout --schema ${DOWNLOADED_XSD_FILE} $GLOB_PATTERN
 
     - name: 'Clean up downloaded file'
       if: ${{ ! inputs.xsd-file && inputs.xsd-url }}
       shell: bash
-      run: rm -f ${{ env.DOWNLOADED_XSD_FILE }}
+      run: rm -f ${DOWNLOADED_XSD_FILE}
