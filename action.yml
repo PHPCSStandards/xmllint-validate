@@ -159,7 +159,7 @@ runs:
     # @link https://github.com/marketplace/actions/xmllint-problem-matcher
     - name: 'Enable showing XML issues inline'
       if: ${{ inputs.show-in-pr != 'false' }}
-      uses: korelstar/xmllint-problem-matcher@1bd292d642ddf3d369d02aaa8b262834d61198c0 # v1.2.0
+      uses: korelstar/xmllint-problem-matcher@dd2ad21bd8a2de0187cb621419537f345e7e509c # v1.3.0
 
     - name: 'List files'
       if: ${{ inputs.debug }}

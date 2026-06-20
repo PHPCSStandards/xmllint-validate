@@ -15,17 +15,17 @@ concurrency:
 jobs:
   yamllint:
     name: 'Lint Yaml'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@4ed5b7db58f8a2703cb83fdd7cf8a018b3aa974b # v1.1.3
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
     with:
       strict: true
 
   markdownlint:
     name: 'Lint Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@4ed5b7db58f8a2703cb83fdd7cf8a018b3aa974b # v1.1.3
+    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
 
   remark:
     name: 'QA Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@4ed5b7db58f8a2703cb83fdd7cf8a018b3aa974b # v1.1.3
+    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
 
   # Validate the "valid" XSD files used in the tests.
   validate-xsds:
