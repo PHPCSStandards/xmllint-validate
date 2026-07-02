@@ -58,6 +58,24 @@ jobs:
           pattern: "path/to/*/docs/*.xml"
 ```
 
+Recursive glob patterns using `**` are supported and match files across any number of directory levels.
+For example, `**/*.xml` validates every `.xml` file in the repository, while `**/phpunit.xml` validates a
+file with that name no matter how deeply it is nested:
+```yaml
+jobs:
+  test:
+    name: "XMLLint validate"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate all XML files in the repo
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "**/*.xml"
+```
+
 Validating XML files against a locally available XSD schema:
 ```yaml
 jobs:

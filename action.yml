@@ -168,6 +168,8 @@ runs:
       shell: bash
       run: |
         # List files which will be examined.
+        # Enable `**` to match files across directory levels (recursive glob).
+        shopt -s globstar
         ls -ah $GLOB_PATTERN
 
     - name: 'Validate for well-formedness'
@@ -175,7 +177,10 @@ runs:
       env:
         GLOB_PATTERN: ${{ inputs.pattern }}
       shell: bash
-      run: xmllint --noout $GLOB_PATTERN
+      run: |
+        # Enable `**` to match files across directory levels (recursive glob).
+        shopt -s globstar
+        xmllint --noout $GLOB_PATTERN
 
     - name: 'Validate against local schema'
       if: ${{ inputs.xsd-file }}
@@ -183,14 +188,20 @@ runs:
         GLOB_PATTERN: ${{ inputs.pattern }}
         XSD_FILE: ${{ inputs.xsd-file }}
       shell: bash
-      run: xmllint --noout --schema "$XSD_FILE" $GLOB_PATTERN
+      run: |
+        # Enable `**` to match files across directory levels (recursive glob).
+        shopt -s globstar
+        xmllint --noout --schema "$XSD_FILE" $GLOB_PATTERN
 
     - name: 'Validate against downloaded remote schema'
       if: ${{ ! inputs.xsd-file && inputs.xsd-url }}
       env:
         GLOB_PATTERN: ${{ inputs.pattern }}
       shell: bash
-      run: xmllint --noout --schema ${{ env.DOWNLOADED_XSD_FILE }} $GLOB_PATTERN
+      run: |
+        # Enable `**` to match files across directory levels (recursive glob).
+        shopt -s globstar
+        xmllint --noout --schema ${{ env.DOWNLOADED_XSD_FILE }} $GLOB_PATTERN
 
     - name: 'Clean up downloaded file'
       if: ${{ ! inputs.xsd-file && inputs.xsd-url }}

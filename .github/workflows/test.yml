@@ -137,6 +137,35 @@ jobs:
             expected: "fail"
 
           ####################################################
+          # Recursive glob patterns (`**` / globstar).
+          ####################################################
+
+          # Test that `**` matches files across directory levels (no XSD).
+          # The fixtures place valid files at depths 0, 1 and 2, so this only
+          # passes if `**` recurses; without globstar it would miss depths 0 and 2.
+          - name: "Test no XSD, recursive glob, valid XML files"
+            pattern: ./tests/fixtures/all-valid-recursive/**/*.xml
+            expected: success
+
+          # The only invalid file lives two levels deep. Without recursive
+          # globbing it would not be matched and the run would wrongly pass, so
+          # this guards that `**` actually reaches nested directories.
+          - name: "Test no XSD, recursive glob, invalid XML deep in tree"
+            pattern: ./tests/fixtures/some-valid-recursive/**/*.xml
+            expected: fail
+
+          # Same, but validating against a local XSD schema.
+          - name: "Test XSD file, recursive glob, valid XML + schema"
+            pattern: ./tests/fixtures/all-valid-recursive-xsd/**/*.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: success
+
+          - name: "Test XSD file, recursive glob, invalid XML deep in tree"
+            pattern: ./tests/fixtures/some-valid-recursive-xsd/**/*.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: fail
+
+          ####################################################
           # Validate against an (originally) remote XSD file.
           ####################################################
 
