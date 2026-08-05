@@ -202,5 +202,5 @@ This action gratefully makes use of the following externally provided tools whic
 
 
 [Composer]:        https://getcomposer.org
-[PHPUnit]:         https://phpunit.de/index.html
+[PHPUnit]:         https://phpunit.de/
 [PHP_CodeSniffer]: https://github.com/PHPCSStandards/PHP_CodeSniffer
