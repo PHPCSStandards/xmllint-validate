@@ -24,6 +24,10 @@ GitHub Action to validate XML files for being well-formed and optionally validat
 > [!NOTE]
 > If both an `xsd-file` and an `xsd-url` are passed, the `xsd-file` takes precedence.
 
+## Permissions
+
+This action does not need any special permissions. It will need access to the code to run on, so you may need to set the `contents: read` permission to allow `actions/checkout` to clone your repo.
+
 ## Using the action
 
 Validating the well-formedness of a single XML file:

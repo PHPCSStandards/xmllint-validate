@@ -12,23 +12,38 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Permissions should be configured at the job level.
+permissions: {}
+
 jobs:
   yamllint:
+    permissions:
+      contents: read # To clone the repo.
+
     name: 'Lint Yaml'
     uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@c535983699986d1c538d4e47f33e813fcfbcc8a0 # v1.2.2
     with:
       strict: true
 
   markdownlint:
+    permissions:
+      contents: read # To clone the repo.
+
     name: 'Lint Markdown'
     uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@c535983699986d1c538d4e47f33e813fcfbcc8a0 # v1.2.2
 
   remark:
+    permissions:
+      contents: read # To clone the repo.
+
     name: 'QA Markdown'
     uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@c535983699986d1c538d4e47f33e813fcfbcc8a0 # v1.2.2
 
   # Validate the "valid" XSD files used in the tests.
   validate-xsds:
+    permissions:
+      contents: read # To clone the repo.
+
     name: 'Validate XSD files'
     runs-on: ubuntu-latest
 
@@ -52,6 +67,9 @@ jobs:
 
   test:
     needs: [yamllint, validate-xsds]
+
+    permissions:
+      contents: read # To clone the repo.
 
     name: "${{ matrix.name }}"
     runs-on: ubuntu-latest
