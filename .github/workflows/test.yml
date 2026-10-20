@@ -21,7 +21,7 @@ jobs:
       contents: read # To clone the repo.
 
     name: 'Lint Yaml'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@c535983699986d1c538d4e47f33e813fcfbcc8a0 # v1.2.2
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@559f40470dbce9f7faeab31f82c0be7dfb93228e # v1.3.0
     with:
       strict: true
 
@@ -30,14 +30,14 @@ jobs:
       contents: read # To clone the repo.
 
     name: 'Lint Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@c535983699986d1c538d4e47f33e813fcfbcc8a0 # v1.2.2
+    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@559f40470dbce9f7faeab31f82c0be7dfb93228e # v1.3.0
 
   remark:
     permissions:
       contents: read # To clone the repo.
 
     name: 'QA Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@c535983699986d1c538d4e47f33e813fcfbcc8a0 # v1.2.2
+    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@559f40470dbce9f7faeab31f82c0be7dfb93228e # v1.3.0
 
   # Validate the "valid" XSD files used in the tests.
   validate-xsds:
