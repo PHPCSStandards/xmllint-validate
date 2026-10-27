@@ -150,6 +150,7 @@ runs:
         # Install xmllint.
         if [[ "${{ env.DEBUG }}" == "false" ]]; then
           sudo apt-get -q install --no-install-recommends -y libxml2-utils > /dev/null
+          xmllint --version
         else
           sudo apt-get install --no-install-recommends -y libxml2-utils
           xmllint --version
