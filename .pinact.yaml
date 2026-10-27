@@ -11,3 +11,9 @@ files:
 min_age:
   value: 3     # Default is 7 days.
   always: true # Always check this, not just when updating pins.
+
+rules:
+  - min_age: 0
+    conditions:
+      - expr: |
+          ActionRepoOwner == "phpcsstandards"
