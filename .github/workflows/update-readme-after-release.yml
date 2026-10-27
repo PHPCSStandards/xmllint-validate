@@ -9,6 +9,9 @@ on:
   release:
     types: [published]
   # And whenever this workflow is being updated.
+  push:
+    paths:
+      - '.github/workflows/update-readme-after-release.yml'
   pull_request:
     paths:
       - '.github/workflows/update-readme-after-release.yml'
