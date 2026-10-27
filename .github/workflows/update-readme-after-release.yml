@@ -40,11 +40,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set branches to use
+      - name: Set branch to use
         id: branches
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          echo "BASE=develop" >> "$GITHUB_OUTPUT"
-          echo "PR_BRANCH=feature/update-readme-after-release" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == 'release' ]]; then
+            echo "BASE=develop" >> "$GITHUB_OUTPUT"
+          else # = PR, manual run or manual (re-)run for a workflow triggered by a PR.
+            echo "BASE=$HEAD_REF" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -71,7 +76,7 @@ jobs:
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           base: ${{ steps.branches.outputs.BASE }}
-          branch: ${{ steps.branches.outputs.PR_BRANCH }}
+          branch: "feature/update-readme-after-release"
           delete-branch: true
           sign-commits: true
           commit-message: "README: update pins in example code after release"
