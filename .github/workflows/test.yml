@@ -52,6 +52,7 @@ jobs:
       contents: read # To clone the repo.
 
     strategy:
+      fail-fast: false
       matrix:
         os: ['ubuntu-24.04', 'ubuntu-26.04']
         pattern:
