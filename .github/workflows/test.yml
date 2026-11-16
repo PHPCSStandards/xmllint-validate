@@ -51,7 +51,13 @@ jobs:
     permissions:
       contents: read # To clone the repo.
 
-    name: 'Validate XSD files'
+    strategy:
+      matrix:
+        pattern:
+          - 'tests/fixtures/xsd-files/valid-local.xsd'
+          - 'docs/test-fixtures/valid-remote.xsd'
+
+    name: "Validate XSD file - ${{ matrix.pattern == 'tests/fixtures/xsd-files/valid-local.xsd' && 'local' || 'remote' }}"
     runs-on: ubuntu-24.04
 
     steps:
@@ -60,16 +66,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Validate XSD file [1]
+      - name: Validate XSD file
         uses: ./
         with:
-          pattern: tests/fixtures/xsd-files/valid-local.xsd
-          xsd-url: https://www.w3.org/2012/04/XMLSchema.xsd
-
-      - name: Validate XSD file [2]
-        uses: ./
-        with:
-          pattern: docs/test-fixtures/valid-remote.xsd
+          pattern: ${{ matrix.pattern }}
           xsd-url: https://www.w3.org/2012/04/XMLSchema.xsd
 
   test:
