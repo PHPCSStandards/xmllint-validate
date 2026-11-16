@@ -59,7 +59,10 @@ jobs:
           - 'tests/fixtures/xsd-files/valid-local.xsd'
           - 'docs/test-fixtures/valid-remote.xsd'
 
-    name: "Validate XSD file - ${{ matrix.pattern == 'tests/fixtures/xsd-files/valid-local.xsd' && 'local' || 'remote' }} (${{ matrix.os == 'ubuntu-24.04' && 'U24.04' || 'U26.04' }})"
+    name: >
+      "Validate XSD file -
+      ${{ matrix.pattern == 'tests/fixtures/xsd-files/valid-local.xsd' && 'local' || 'remote' }}
+      (${{ matrix.os == 'ubuntu-24.04' && 'U24.04' || 'U26.04' }})"
     runs-on: ${{ matrix.os }}
 
     steps:
