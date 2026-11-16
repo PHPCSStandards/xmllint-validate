@@ -52,6 +52,7 @@ jobs:
       contents: read # To clone the repo.
 
     strategy:
+      fail-fast: false
       matrix:
         os: ['ubuntu-24.04', 'ubuntu-26.04']
 
@@ -82,13 +83,12 @@ jobs:
     permissions:
       contents: read # To clone the repo.
 
-    name: "${{ matrix.name }}"
+    name: "${{ matrix.name }} (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-24.04', 'ubuntu-26.04']
         include:
           ####################################################
           # Basic action input handling.
@@ -96,6 +96,10 @@ jobs:
 
           # Test input handling: missing required input.
           - name: "Test required input missing"
+            os: 'ubuntu-24.04'
+            expected: "fail"
+          - name: "Test required input missing"
+            os: 'ubuntu-26.04'
             expected: "fail"
 
           ####################################################
@@ -104,19 +108,39 @@ jobs:
 
           # Test basic well-formedness validation.
           - name: "Test no XSD, valid XML"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-basic.xml
+            expected: success
+          - name: "Test no XSD, valid XML"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-basic.xml
             expected: success
 
           - name: "Test no XSD, invalid XML"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            expected: fail
+          - name: "Test no XSD, invalid XML"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             expected: fail
 
           # Test that glob patterns are handled correctly.
           - name: "Test no XSD, glob, valid XML files"
+            os: 'ubuntu-24.04'
+            pattern: ./tests/fixtures/all-valid-basic/*.xml
+            expected: success
+          - name: "Test no XSD, glob, valid XML files"
+            os: 'ubuntu-26.04'
             pattern: ./tests/fixtures/all-valid-basic/*.xml
             expected: success
 
           - name: "Test no XSD, glob, invalid XML files"
+            os: 'ubuntu-24.04'
+            pattern: ./tests/*/some-valid-basic/*.xml
+            expected: fail
+          - name: "Test no XSD, glob, invalid XML files"
+            os: 'ubuntu-26.04'
             pattern: ./tests/*/some-valid-basic/*.xml
             expected: fail
 
@@ -126,43 +150,91 @@ jobs:
 
           # Test input handling: optional XSD file.
           - name: "Test XSD file wrong file extension"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/wrong-extension.notxsd
+            expected: "fail"
+          - name: "Test XSD file wrong file extension"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-local.xml
             xsd-file: tests/fixtures/xsd-files/wrong-extension.notxsd
             expected: "fail"
 
           - name: "Test XSD file doesn't exist"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/file-does-not-exist.xsd
+            expected: "fail"
+          - name: "Test XSD file doesn't exist"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-local.xml
             xsd-file: tests/fixtures/xsd-files/file-does-not-exist.xsd
             expected: "fail"
 
           - name: "Test XSD file empty"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/file-is-empty.xsd
+            expected: "fail"
+          - name: "Test XSD file empty"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-local.xml
             xsd-file: tests/fixtures/xsd-files/file-is-empty.xsd
             expected: "fail"
 
           # Test validating against a local XSD schema.
           - name: "Test XSD file, valid XML + schema"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "success"
+          - name: "Test XSD file, valid XML + schema"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-local.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             expected: "success"
 
           - name: "Test XSD file, invalid XML"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "fail"
+          - name: "Test XSD file, invalid XML"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             expected: "fail"
 
           - name: "Test XSD file, valid XML, not schema"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-local.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "fail"
+          - name: "Test XSD file, valid XML, not schema"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-local.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             expected: "fail"
 
           # Test that glob patterns are handled correctly in combination with a local XSD schema.
           - name: "Test XSD file, glob, valid XML + schema"
+            os: 'ubuntu-24.04'
+            pattern: ./tests/fixtures/all-valid-local-xsd/*.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "success"
+          - name: "Test XSD file, glob, valid XML + schema"
+            os: 'ubuntu-26.04'
             pattern: ./tests/fixtures/all-valid-local-xsd/*.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             expected: "success"
 
           - name: "Test XSD file, glob, valid XML, not schema"
+            os: 'ubuntu-24.04'
+            pattern: ./tests/fixtures/some-*-local-xsd/*.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            expected: "fail"
+          - name: "Test XSD file, glob, valid XML, not schema"
+            os: 'ubuntu-26.04'
             pattern: ./tests/fixtures/some-*-local-xsd/*.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             expected: "fail"
@@ -173,44 +245,94 @@ jobs:
 
           # Test input handling: optional XSD URL.
           - name: "Test XSD URL wrong scheme"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-local.xml
+            xsd-url: file://tests/fixtures/valid-local.xml
+            expected: "fail"
+          - name: "Test XSD URL wrong scheme"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-local.xml
             xsd-url: file://tests/fixtures/valid-local.xml
             expected: "fail"
 
           - name: "Test XSD URL wrong file extension"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/wrong-extension.notxsd
+            expected: "fail"
+          - name: "Test XSD URL wrong file extension"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-remote.xml
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/wrong-extension.notxsd
             expected: "fail"
 
           - name: "Test XSD URL doesn't exist"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/file-does-not-exist.xsd
+            expected: "fail"
+          - name: "Test XSD URL doesn't exist"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-remote.xml
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/file-does-not-exist.xsd
             expected: "fail"
 
           - name: "Test XSD URL empty"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/file-is-empty.xsd
+            expected: "fail"
+          - name: "Test XSD URL empty"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-remote.xml
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/file-is-empty.xsd
             expected: "fail"
 
           # Test validating against a (originally) remote XSD schema.
           - name: "Test remote XSD file, valid XML"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-url: http://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "success"
+          - name: "Test remote XSD file, valid XML"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-remote.xml
             xsd-url: http://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
             expected: "success"
 
           - name: "Test remote XSD file, valid XML, not valid against schema"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-remote.xml
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "fail"
+          - name: "Test remote XSD file, valid XML, not valid against schema"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-remote.xml
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
             expected: "fail"
 
           # Safeguard that a local XSD file always takes precedence over a remote XSD URL.
           - name: "Test local XSD overrules remote [1]"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-local.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "success"
+          - name: "Test local XSD overrules remote [1]"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-local.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
             expected: "success"
 
           - name: "Test local XSD overrules remote [2]"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-remote.xml
+            xsd-file: tests/fixtures/xsd-files/valid-local.xsd
+            xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
+            expected: "fail"
+          - name: "Test local XSD overrules remote [2]"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-remote.xml
             xsd-file: tests/fixtures/xsd-files/valid-local.xsd
             xsd-url: https://phpcsstandards.github.io/xmllint-validate/test-fixtures/valid-remote.xsd
@@ -227,27 +349,57 @@ jobs:
 
           # Safeguard that explicitly enabling/disabling the show-in-pr option doesn't break anything.
           - name: "Test show-in-pr: bool true"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: true
+            expected: "fail"
+          - name: "Test show-in-pr: bool true"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             show-in-pr: true
             expected: "fail"
 
           - name: "Test show-in-pr: string true"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: 'true'
+            expected: "fail"
+          - name: "Test show-in-pr: string true"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             show-in-pr: 'true'
             expected: "fail"
 
           - name: "Test show-in-pr: bool false"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: false
+            expected: "fail"
+          - name: "Test show-in-pr: bool false"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             show-in-pr: false
             expected: "fail"
 
           - name: "Test show-in-pr: string false"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: 'false'
+            expected: "fail"
+          - name: "Test show-in-pr: string false"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             show-in-pr: 'false'
             expected: "fail"
 
           # Any other value should have no influence and the default behaviour (annotations = on) should prevail.
           - name: "Test show-in-pr: unsupported value"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/invalid-basic.xml
+            show-in-pr: somethingElse
+            expected: "fail"
+          - name: "Test show-in-pr: unsupported value"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/invalid-basic.xml
             show-in-pr: somethingElse
             expected: "fail"
@@ -259,11 +411,23 @@ jobs:
           # Re-run a few tests with verbosity on to allow for viewing the difference in the output.
           # Safeguard that explicitly enabling/disabling the debug option doesn't break anything.
           - name: "Debug off, valid XML"
+            os: 'ubuntu-24.04'
+            pattern: tests/fixtures/valid-basic.xml
+            debug: false
+            expected: "success"
+          - name: "Debug off, valid XML"
+            os: 'ubuntu-26.04'
             pattern: tests/fixtures/valid-basic.xml
             debug: false
             expected: "success"
 
           - name: "Debug on, invalid XML"
+            os: 'ubuntu-24.04'
+            pattern: ./tests/*/some-valid-basic/*.xml
+            debug: true
+            expected: "fail"
+          - name: "Debug on, invalid XML"
+            os: 'ubuntu-26.04'
             pattern: ./tests/*/some-valid-basic/*.xml
             debug: true
             expected: "fail"
