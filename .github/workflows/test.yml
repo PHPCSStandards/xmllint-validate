@@ -55,8 +55,11 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-24.04', 'ubuntu-26.04']
+        pattern:
+          - 'tests/fixtures/xsd-files/valid-local.xsd'
+          - 'docs/test-fixtures/valid-remote.xsd'
 
-    name: 'Validate XSD files'
+    name: 'Validate XSD files - ${{ matrix.pattern == 'tests/fixtures/xsd-files/valid-local.xsd' && 'local' || 'remote' }} (${{ matrix.os == 'ubuntu-24.04' && 'U24.04' || 'U26.04' }})'
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -65,16 +68,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Validate XSD file [1]
+      - name: Validate XSD file
         uses: ./
         with:
-          pattern: tests/fixtures/xsd-files/valid-local.xsd
-          xsd-url: https://www.w3.org/2012/04/XMLSchema.xsd
-
-      - name: Validate XSD file [2]
-        uses: ./
-        with:
-          pattern: docs/test-fixtures/valid-remote.xsd
+          pattern: ${{ matrix.pattern }}
           xsd-url: https://www.w3.org/2012/04/XMLSchema.xsd
 
   test:
@@ -83,7 +80,7 @@ jobs:
     permissions:
       contents: read # To clone the repo.
 
-    name: "${{ matrix.name }} (${{ matrix.os }})"
+    name: "${{ matrix.name }} (${{ matrix.os == 'ubuntu-24.04' && 'U24.04' || 'U26.04' }})"
     runs-on: ${{ matrix.os }}
 
     strategy:
